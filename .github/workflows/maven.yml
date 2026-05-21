@@ -5,7 +5,9 @@ on:
     branches: [ "main" ]
 
   push:
-    branches: [ "main" ]
+    branches:
+      - main
+      - sara-auth-jwt
 
 jobs:
   build:
