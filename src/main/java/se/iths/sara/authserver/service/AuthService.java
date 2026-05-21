@@ -45,3 +45,4 @@ public class AuthService {
         return new AuthResponse(token);
     }
 }
+// JWT authentication implementation by Sara
