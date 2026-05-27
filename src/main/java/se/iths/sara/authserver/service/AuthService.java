@@ -9,6 +9,8 @@ import se.iths.sara.authserver.dto.RegisterRequest;
 import se.iths.sara.authserver.entity.AppUser;
 import se.iths.sara.authserver.repository.AppUserRepository;
 
+import java.util.Map;
+
 @Service
 public class AuthService {
     private final AppUserRepository appUserRepository;
@@ -40,9 +42,16 @@ public class AuthService {
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("Fel username eller lösenord");
         }
-        String token = jwtService.generateToken(user.getUsername(), "USER");
+        String token =
+                jwtService.generateToken(
+                        user.getUsername(),
+                        user.getRole().name()
+                );
 
         return new AuthResponse(token);
     }
+
+    public Map<String, Object> getJwks() {
+        return jwtService.getJwks();
+    }
 }
-// JWT authentication implementation by Sara
