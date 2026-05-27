@@ -12,7 +12,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AppUser {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
