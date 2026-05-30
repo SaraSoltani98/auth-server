@@ -7,6 +7,7 @@ import se.iths.sara.authserver.dto.AuthResponse;
 import se.iths.sara.authserver.dto.LoginRequest;
 import se.iths.sara.authserver.dto.RegisterRequest;
 import se.iths.sara.authserver.entity.AppUser;
+import se.iths.sara.authserver.entity.Role;
 import se.iths.sara.authserver.repository.AppUserRepository;
 
 import java.util.Map;
@@ -33,6 +34,14 @@ public class AuthService {
         AppUser user = new AppUser();
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        appUserRepository.save(user);
+    }
+
+    public void makeAdmin(String username) {
+        AppUser user = appUserRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setRole(Role.ADMIN);
         appUserRepository.save(user);
     }
 

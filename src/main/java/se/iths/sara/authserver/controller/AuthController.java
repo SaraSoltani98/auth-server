@@ -45,4 +45,10 @@ public class AuthController {
         return jwtService.getJwks();
     }
 
+    @PutMapping("/users/{username}/admin")
+    public String makeAdmin(@PathVariable String username) {
+        authService.makeAdmin(username);
+        return username + " is now ADMIN";
+    }
+
 }
