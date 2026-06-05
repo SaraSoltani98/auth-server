@@ -33,7 +33,7 @@ public class JwtService {
 
         return Jwts.builder()
                 .subject(username)
-                .claim("roles", role)
+                .claim("roles", List.of(role))
                 .issuedAt(new Date())
                 .expiration(
                         new Date(
