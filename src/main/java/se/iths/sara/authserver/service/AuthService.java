@@ -9,7 +9,9 @@ import se.iths.sara.authserver.entity.AppUser;
 import se.iths.sara.authserver.entity.Role;
 import se.iths.sara.authserver.repository.AppUserRepository;
 
+import java.util.List;
 import java.util.Map;
+
 
 @Service
 public class AuthService {
@@ -52,7 +54,12 @@ public class AuthService {
                 user.getRole().name()
         );
 
-        return new AuthResponse(token);
+        return new AuthResponse(
+                token,
+                JwtService.TOKEN_EXPIRATION_SECONDS,
+                user.getUsername(),
+                List.of(user.getRole().name())
+        );
     }
 
     public void makeAdmin(String username) {
