@@ -14,6 +14,7 @@ import java.util.Map;
 
 @Service
 public class JwtService {
+    public static final long TOKEN_EXPIRATION_SECONDS = 3600;
 
     private final KeyPair keyPair = generateKeyPair();
 
@@ -37,7 +38,7 @@ public class JwtService {
                 .issuedAt(new Date())
                 .expiration(
                         new Date(
-                                System.currentTimeMillis() + 1000 * 60 * 60
+                                System.currentTimeMillis() + TOKEN_EXPIRATION_SECONDS * 1000
                         )
                 )
                 .signWith((RSAPrivateKey) keyPair.getPrivate())
