@@ -14,23 +14,37 @@ import se.iths.sara.authserver.repository.AppUserRepository;
 public class DataInitializer {
 
     @Bean
-    CommandLineRunner createAdmin(
+    CommandLineRunner createUsers(
             AppUserRepository appUserRepository,
             PasswordEncoder passwordEncoder
     ) {
         return args -> {
-            String username = "admin@webshop.se";
+            String adminUsername = "admin@webshop.se";
 
-            if (!appUserRepository.existsByUsername(username)) {
+            if (!appUserRepository.existsByUsername(adminUsername)) {
                 AppUser admin = new AppUser();
 
-                admin.setUsername(username);
+                admin.setUsername(adminUsername);
                 admin.setPassword(passwordEncoder.encode("admin12345"));
                 admin.setRole(Role.ADMIN);
 
                 appUserRepository.save(admin);
 
-                System.out.println("Local admin user created: " + username);
+                System.out.println("Local admin user created: " + adminUsername);
+            }
+
+            String userUsername = "user@webshop.se";
+
+            if (!appUserRepository.existsByUsername(userUsername)) {
+                AppUser user = new AppUser();
+
+                user.setUsername(userUsername);
+                user.setPassword(passwordEncoder.encode("user12345"));
+                user.setRole(Role.USER);
+
+                appUserRepository.save(user);
+
+                System.out.println("Local regular user created: " + userUsername);
             }
         };
     }
