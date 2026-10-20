@@ -3,13 +3,19 @@ package se.iths.sara.authserver.controller;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import se.iths.sara.authserver.dto.AuthResponse;
 import se.iths.sara.authserver.dto.LoginRequest;
 import se.iths.sara.authserver.dto.RegisterRequest;
+import se.iths.sara.authserver.dto.SessionResponseDTO;
 import se.iths.sara.authserver.service.AuthService;
 import se.iths.sara.authserver.service.JwtService;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -51,4 +57,30 @@ public class AuthController {
         return username + " is now ADMIN";
     }
 
+    @GetMapping("/me")
+    @SecurityRequirement(name = "mySecurity")
+    public ResponseEntity<SessionResponseDTO> me(@AuthenticationPrincipal Jwt jwt) {
+        List<String> roles = jwt.getClaimAsStringList("roles");
+
+        SessionResponseDTO response = new SessionResponseDTO(
+                remainingSeconds(jwt),
+                jwt.getSubject(),
+                roles == null ? List.of() : roles
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
+    private long remainingSeconds(Jwt jwt) {
+        Instant expiresAt = jwt.getExpiresAt();
+
+        if (expiresAt == null) {
+            return 0;
+        }
+
+        return Math.max(
+                0,
+                Duration.between(Instant.now(), expiresAt).getSeconds()
+        );
+    }
 }
