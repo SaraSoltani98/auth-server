@@ -5,17 +5,30 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtValidators;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import se.iths.sara.authserver.service.JwtService;
 
+import java.security.KeyPair;
+import java.security.interfaces.RSAPublicKey;
 import java.util.List;
 
 @Configuration
 public class SecurityConfig {
+
+    private final JwtService service;
+
+    public SecurityConfig(JwtService service) {
+        this.service = service;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -27,6 +40,13 @@ public class SecurityConfig {
         http
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(
+                                SessionCreationPolicy.STATELESS
+                        ))
+                .oauth2ResourceServer(oauth2 ->
+                        oauth2.jwt(jwt -> {
+                        }))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/auth/register",
@@ -73,5 +93,19 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
 
         return source;
+    }
+
+    @Bean
+    public JwtDecoder jwtDecoder(JwtService service) {
+        KeyPair keyPair = service.getKeyPair();
+
+        NimbusJwtDecoder decoder =
+                NimbusJwtDecoder.withPublicKey(
+                        (RSAPublicKey) keyPair.getPublic()
+                ).build();
+
+        decoder.setJwtValidator(JwtValidators.createDefault());
+
+        return decoder;
     }
 }
