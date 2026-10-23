@@ -3,14 +3,13 @@ package se.iths.sara.authserver.config;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import se.iths.sara.authserver.entity.AppUser;
 import se.iths.sara.authserver.entity.Role;
 import se.iths.sara.authserver.repository.AppUserRepository;
 
 @Configuration
-@Profile("local")
+
 public class DataInitializer {
 
     @Bean
